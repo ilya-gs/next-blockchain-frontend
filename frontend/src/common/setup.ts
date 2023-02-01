@@ -1,4 +1,4 @@
-import path from "path";
+import { useRef } from "react";
 
 //====================================================//
 
@@ -18,7 +18,20 @@ export const setup: Setup = {
 
     init() {
         setup.initialized = true;
-        setup.artifactsPath = path.join(__dirname, '/..', 'frontend/contracts');
+        setup.artifactsPath = (__dirname + '/../contracts');
     }
+}
+
+export function useSetup(): Setup {
+    const setupRef = useRef<Setup>();
+    
+    if (!setup.initialized)
+        setup.init()
+    
+    if (setupRef.current !== setup) {
+        setupRef.current = setup;
+    }
+    
+    return setupRef.current;
 }
 

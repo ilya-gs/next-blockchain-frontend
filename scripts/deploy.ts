@@ -61,36 +61,79 @@ async function main(): Promise<void> {
   await auction2.deployed()
 
   saveFrontendFiles(
-    path.join(__dirname, '/..', 'frontend/contracts'),
-    [{ name: "AuctionBike", contract: "DutchAuction", address: auction1.address },
-      { name: "AuctionCar", contract: "DutchAuction", address: auction1.address }])
+    path.join(__dirname, '/..', 'frontend/src/contracts'),
+    {
+      AuctionBike: {
+        contract: "DutchAuction",
+        address: auction1.address
+      },
+      AuctionCar: {
+        contract: "DutchAuction",
+        address: auction2.address
+      }
+    }) 
+
+  
   
 }
 
 //====================================================//
 //====================================================//
 
-function saveFrontendFiles(contractsDir: string, contracts: { name: string, contract: string, address:string }[] ) {
+function saveFrontendFiles(contractsDir: string, contracts: { [key: string]: { contract: string, address: string} } ) {
+
+  const fullContacts: { [key: string]: { name: string, contract: string, address: string, abi: any }} = {};
+  const contactTypes: { [key: string]: boolean } = {};
 
   if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir)
   }
 
-  fs.writeFileSync(
-    path.join(contractsDir, '/', 'deployedContracts.json'),
-    JSON.stringify(contracts, undefined, 2)
-  )
-
-  contracts.forEach((contract_item) => {
-    const {contract} = contract_item
+  for (const [name, {contract, address}] of Object.entries(contracts)) {
+    
+    
 
     const ContractArtifact = hre.artifacts.readArtifactSync(contract)
 
-    fs.writeFileSync(
-      path.join(contractsDir, '/', contract + ".json"),
-      JSON.stringify(ContractArtifact, null, 2)
-    )
-  })
+    fullContacts[name] = { name, address, contract, abi: ContractArtifact.abi };
+    contactTypes[contract] = true;
+//    fs.writeFileSync(
+//      path.join(contractsDir, '/', contract + ".json"),
+//      JSON.stringify(ContractArtifact, null, 2)
+//    )
+  }
+
+  const text = `
+import { ${Object.keys(contactTypes).join(', ')} } from '../../../typechain-types';
+import { ethers } from 'ethers';
+
+export type DeployedContracts = {
+    ${Object.keys(fullContacts).map(key => fullContacts[key].name+ ": " + fullContacts[key].contract).join(', \n\t\t')}  
+}
+
+export function connectAll(provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider) : DeployedContracts
+{
+    let a: any = {};
+
+    ${Object.keys(fullContacts).map(key => {
+      return `a['${fullContacts[key].name}'] = new ethers.Contract(
+        deployedContracts.${fullContacts[key].name}.address,
+        deployedContracts.${fullContacts[key].name}.abi, provider
+        ) as ${fullContacts[key].contract};`
+    }).join('\n\t\t\n\t\t')}
+
+    return a as DeployedContracts;
+}
+
+
+
+const deployedContracts =
+  ` + JSON.stringify(fullContacts, undefined, 2);
+
+  fs.writeFileSync(
+    path.join(contractsDir, '/', 'deployedContracts.ts'),
+    text
+  )
 }
 
 //====================================================//
