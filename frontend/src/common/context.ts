@@ -7,4 +7,8 @@ export function useCustomContext() {
     return React.useContext(CustomContext);
 }
 
+export function useAppSelector<Selected = unknown>(f: (state: State) => Selected): Selected {
+    return f(React.useContext(CustomContext).state);
+}
+
 export default CustomContext;
