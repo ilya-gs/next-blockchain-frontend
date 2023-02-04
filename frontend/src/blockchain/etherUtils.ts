@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { setup } from "../common/setup";
+import { setup  } from '../common/setup';
 import { useRef } from 'react';
 //import { initialState } from './reducer';
 import { DeployedContracts, connectAll } from '../contracts/deployedContracts';
@@ -18,10 +18,11 @@ interface EtheriumUtils{
     contracts: DeployedContracts; //{ [key: string]: ethers.Contract },
     contractsConnected: boolean;
 
+    disconnectMetamask(): void;
     initRpcProvider(force?: boolean): Promise<boolean>,
     initMetamaskWeb3Provider(force?: boolean): Promise<boolean>,
     initInstances(provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider | ethers.Signer): Promise<boolean>,
-    //isCorrectCain(): Promise<boolean>,
+    isCorrectChain: () => Promise<boolean>,
     //changeCain(): Promise<boolean>,
     // init(force?: boolean): Promise<boolean>,
 }
@@ -37,6 +38,16 @@ export const eu: EtheriumUtils = {
     isReadable: false,
     isWriteable: false,
     //====================================================//
+
+    disconnectMetamask(): void{
+        eu.metamaskProvider = undefined
+        eu.web3Provider = undefined
+        eu.signer = undefined;
+        eu.signerAddress = undefined;
+        eu.isWriteable = false;
+        eu.contracts = {} as any;
+        eu.contractsConnected = false;
+    },
 
     async initRpcProvider(force=false){
         if(!eu.rpcProvider || force){
@@ -99,6 +110,16 @@ export const eu: EtheriumUtils = {
 
     //====================================================//
     
+    isCorrectChain: async (): Promise<boolean> => {
+        if (eu.metamaskProvider)
+        {
+            const chainId = await eu.metamaskProvider.request({ method: "eth_chainId" });
+            console.log("🚀 ~ file: etherUtils.ts:106 ~ isCorrectChain: ~ chainId", chainId)
+            console.log("🚀 ~ file: etherUtils.ts:108 ~ isCorrectChain: ~ setup.chainId", setup.chainIdHex)
+            return (chainId === setup.chainIdHex);
+        }
+        throw new Error("Metamask provider is not initialized");
+    }
     // async init(force = false)
     // {
     //     await eu.initRpcProvider();

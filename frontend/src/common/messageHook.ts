@@ -6,7 +6,7 @@ type AsyncFunction<T = unknown> = () => Promise<T>;
 
 //====================================================//
 
-export type MessageType = "Error" | "Warning" | "Notice" | "Success"
+export type MessageType = "error" | "warning" | "info" | "success"
 
 //====================================================//
 
@@ -15,7 +15,7 @@ export function useMessage(dispatch: React.Dispatch<Actions> | null = null): (te
     if (dispatch === null)
         dispatch = dispatchFromContext;
     return function (text: string, type?: MessageType): void  {
-        dispatch!(['SEND_MESSAGE', { text: text, type: type===undefined ? "Notice" : type }]);
+        dispatch!(['SEND_MESSAGE', { text: text, type: type===undefined ? "info" : type }]);
     }
 }
 
@@ -33,12 +33,12 @@ export function useSafe(dispatch: React.Dispatch<Actions> | null = null): <T = u
                 return v;
             }).catch((e) => {
                 if (customError !== undefined)
-                    sendMessage(customError, "Error");
+                    sendMessage(customError, "error");
                 else {
                     if (typeof e === "string") {
-                        sendMessage(e, "Error");
+                        sendMessage(e, "error");
                     } else if (typeof e === "object") {
-                        sendMessage((e as any).message, "Error");
+                        sendMessage((e as any).message, "error");
                     }
                 }
                 return undefined;
@@ -70,12 +70,12 @@ export function useSafe(dispatch: React.Dispatch<Actions> | null = null): <T = u
             return f();
         } catch (e) {
             if (customError !== undefined)
-                sendMessage(customError, "Error");
+                sendMessage(customError, "error");
             else {
                 if (typeof e === "string") {
-                    sendMessage(e, "Error");
+                    sendMessage(e, "error");
                 } else if (typeof e === "object") {
-                    sendMessage((e as any).message, "Error");
+                    sendMessage((e as any).message, "error");
                 }
             }
             return undefined;

@@ -14,9 +14,9 @@ export  function fromWei(wei: ethers.BigNumberish | boolean | undefined, digits:
   return ethers.utils.formatUnits(wei,digits); 
 } 
 
-export function toWei(eth: string, digits: number = 18): string
+export function toWei(eth: string | number, digits: number = 18): string
 {
-  return ethers.utils.parseUnits(eth,digits).toString();
+  return ethers.utils.parseUnits(String(eth),digits).toString();
 } 
 
 export function fromWei2(wei: ethers.BigNumberish | boolean | undefined,digits: number=18): string 

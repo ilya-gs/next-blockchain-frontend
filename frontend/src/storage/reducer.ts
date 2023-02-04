@@ -12,13 +12,13 @@ type BlockchainSlice = {
 export type State = {
     counter: number;
 //    isLoading: boolean;
-    message: { text: string, type: MessageType },
+    message: { text: string, type: MessageType } | undefined,
     blockchain: BlockchainSlice
 }
 
 export const initialState: State = {
     counter: 0,
-    message: {text: '', type: 'Notice'},
+    message: undefined,
     blockchain: {
         contracts: {
             auctionBike: { name: 'bk' },
@@ -37,6 +37,7 @@ export type Actions =
     | ['DECREASE']
     | ['SET', number ]
     | ['SEND_MESSAGE', { text: string, type: MessageType }]
+    | ['CLEAR_MESSAGE']
     | ['SET_CONTRACT_FIELD', { contract: string, field: string, value: ContractFiledValue }]
     | ['SET_CONNECTION', { isConnected: boolean, address: string}]
 
@@ -57,6 +58,8 @@ export function reducer(state: State, action: Actions): State {
         case "SEND_MESSAGE":
             payload = action[1];
             return { ...state, message: payload };
+        case "CLEAR_MESSAGE":
+            return { ...state, message: undefined };
         case "SET_CONTRACT_FIELD":
             payload = action[1];
             newState.blockchain.contracts[payload.contract][payload.field] = payload.value;

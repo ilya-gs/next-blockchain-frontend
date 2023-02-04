@@ -1,4 +1,4 @@
-interface RequestArguments {
+export interface RequestArguments {
     method: string;
     params?: unknown[] | object;
 }
@@ -18,7 +18,7 @@ interface ProviderRpcError extends Error {
     data?: unknown;
 }
 
-interface Web3WalletPermission {
+export interface Web3WalletPermission {
     // The name of the method corresponding to the permission
     parentCapability: string;
 
@@ -61,7 +61,7 @@ interface WatchAssetParams {
 export interface MyMetaMaskEthereumProvider {
     isMetaMask?: boolean;
     isConnected(): boolean;
-    request(args: RequestArguments): Promise<unknown>;
+//    request(args: RequestArguments): Promise<unknown>;
     on(type: 'connect', handler: (connectInfo: ConnectInfo) => void): void;
     on(type: 'disconnect', handler: (error: ProviderRpcError) => void): void;
     on(type: 'accountsChanged', handler: (accounts: Array<string>) => void): void;
@@ -70,12 +70,12 @@ export interface MyMetaMaskEthereumProvider {
     
     request(req: { method: 'eth_requestAccounts' }): Promise<string[]>;
     request(req: { method: 'wallet_requestPermissions', params: RequestedPermissions[] }): Promise<string[]>;
-    request(req: { method: ' wallet_getPermissions' }): Promise<Web3WalletPermission[]>;
-    request(req: { method: 'wallet_addEthereumChain', params: [AddEthereumChainParameter] }): Promise<null>;
+    request(req: { method: 'wallet_getPermissions' }): Promise<string>;
     request(req: { method: 'wallet_switchEthereumChain', params: [SwitchEthereumChainParameter] }): Promise<null>;
     request(req: { method: 'wallet_watchAsset', params: WatchAssetParams }): Promise<null>;
     request(req: { method: 'wallet_scanQRCode', params: string[] }): Promise<string>;
     request(req: { method: 'eth_chainId' }): Promise<string>;
+    request(req: { method: 'wallet_addEthereumChain', params: [AddEthereumChainParameter] }): Promise<null>;
 
     once(eventName: string | symbol, listener: (...args: any[]) => void): this;
     //on(eventName: string | symbol, listener: (...args: any[]) => void): this;

@@ -3,6 +3,7 @@ import AskDialog, { CallbackAskDlg } from '../components/AskDialog';
 import { sleep } from '../blockchain/functions';
 import { State, Actions, initialState, reducer } from '../storage/reducer';
 import { AskDialogCreator } from './contextHooks';
+import { SnackbarProvider } from 'notistack';
 
 export const CustomContext = React.createContext<{
     state: State,
@@ -58,18 +59,20 @@ const AppContext: FC<PropsWithChildren<Props>> = ({ children }) => {
 
     //====================================================//
 
-    useEffect(() => {
-        sleep(5000).then(() => dialogCreator("title", ["yes", "no"], "text text").then((res) => console.log(res)));
+    // useEffect(() => {
+    //     sleep(5000).then(() => dialogCreator("title", ["yes", "no"], "text text").then((res) => console.log(res)));
         
-    }, []);
+    // }, []);
 
     //====================================================//
 
     return (
-        <CustomContext.Provider value={providerState}>
-            <AskDialog open={open} title={title} options={options} callback={callBack} text={text} />                
-            {children} 
-        </CustomContext.Provider>
+        <SnackbarProvider maxSnack={7}>
+            <CustomContext.Provider value={providerState}>
+                <AskDialog open={open} title={title} options={options} callback={callBack} text={text} />                
+                {children} 
+            </CustomContext.Provider>
+        </SnackbarProvider>
     )
 }
 
