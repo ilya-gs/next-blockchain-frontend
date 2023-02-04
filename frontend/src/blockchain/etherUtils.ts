@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import { setup } from "../common/setup";
-import { Ethereumish } from "../types/Ethereumish";
 import { useRef } from 'react';
 //import { initialState } from './reducer';
 import { DeployedContracts, connectAll } from '../contracts/deployedContracts';
@@ -22,8 +21,8 @@ interface EtheriumUtils{
     initRpcProvider(force?: boolean): Promise<boolean>,
     initMetamaskWeb3Provider(force?: boolean): Promise<boolean>,
     initInstances(provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider | ethers.Signer): Promise<boolean>,
-    isCorrectCain(): Promise<boolean>,
-    changeCain(): Promise<boolean>,
+    //isCorrectCain(): Promise<boolean>,
+    //changeCain(): Promise<boolean>,
     // init(force?: boolean): Promise<boolean>,
 }
 
@@ -62,9 +61,9 @@ export const eu: EtheriumUtils = {
                 eu.signer = eu.web3Provider.getSigner();
                 eu.signerAddress = await eu.signer?.getAddress();
                 eu.contractsConnected=false;
-                if (!eu.isCorrectCain()){
+                /*if (!eu.isCorrectCain()){
                     eu.changeCain();
-                }
+                }*/
                 eu.initInstances(eu.signer);
             }
         } catch (error) {

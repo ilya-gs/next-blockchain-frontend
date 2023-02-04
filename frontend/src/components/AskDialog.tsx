@@ -4,26 +4,28 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContentText } from '@mui/material';
 
 
 //====================================================//
 
-type Callback = (ret: number) => void
+export type CallbackAskDlg = (ret: number) => void
 
 type Props = {
-    title?: string
+    title: string
+    text?: string
     options: string[]
-    callback: Callback;
+    callback?: CallbackAskDlg;
+    open: boolean;
 }
 
 //====================================================//
 
-const AskDialog: React.FC <React.PropsWithChildren<Props>> = ({title,options,callback,children}) => {
-    const [open, setOpen] = React.useState(false);
+const AskDialog: React.FC <Props> = ({open,title,options,callback,text}) => {
 
     const handleClick = (n: number) => {
-        setOpen(false);
-        callback(n);
+        if (callback)
+            callback(n);
     };
 
 
@@ -38,11 +40,13 @@ const AskDialog: React.FC <React.PropsWithChildren<Props>> = ({title,options,cal
                     {title}
                 </DialogTitle>
                 <DialogContent>
-                    {children}
+                    <DialogContentText id="alert-dialog-description">
+                        {text}
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                 {options.map((item: string, index: number) => {
-                    return <Button onClick={() => handleClick(index)}>{item}</Button>;
+                    return <Button key={item + index} onClick={() => handleClick(index)}>{item}</Button>;
                 })}
                 </DialogActions>
             </Dialog>

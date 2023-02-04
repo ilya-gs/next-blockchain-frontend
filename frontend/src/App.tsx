@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { initialState, reducer } from './storage/reducer';
-import CustomContext from './common/context';
 import { eu, useEthereum } from './blockchain/etherUtils';
 import { setup } from './common/setup';
 import BcView from './blockchain/BcView';
@@ -8,12 +6,13 @@ import { Auction } from './blockchain/Auction';
 import ErrorLoger from './components/ErrorLoger';
 import { useSafe } from './common/messageHook';
 import Dumper from './components/Dumper';
+import { useAppDispatch, useAppSelector } from './common/contextHooks';
+
 
 function App() {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const providerState = { state, dispatch };
+  const dispatch=useAppDispatch()
   const eth = useEthereum();
-  const safe = useSafe(dispatch);
+  const safe = useSafe();
 
   useEffect(() => {
 
@@ -45,7 +44,6 @@ function App() {
   
 
   return (
-    <CustomContext.Provider value={providerState}>
       <div>
         <Auction name='auctionBike' instance={eu.contracts.AuctionBike}></Auction>
         <BcView contract='auctionBike' field='name' tooltip='test tt' lable='Name' />
@@ -54,9 +52,8 @@ function App() {
         <br />
         <br />
         <ErrorLoger></ErrorLoger>
-        <Dumper value={state}/>
+        <Dumper value={useAppSelector((state) => state)}/>
       </div>
-    </CustomContext.Provider>
   );
 }
 

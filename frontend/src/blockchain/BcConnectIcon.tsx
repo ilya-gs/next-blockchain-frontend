@@ -3,7 +3,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { useAppDispatch, useAppSelector } from '../common/context';
+import { useAppDispatch, useAppSelector } from '../common/contextHooks';
 //import { useSelector,useDispatch } from 'react-redux';
 //import {asyncConnectWallet, disconnectWallet} from '../store/blockchainSlice';
 import { useSafe } from '../common/messageHook';

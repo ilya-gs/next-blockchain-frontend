@@ -1,4 +1,4 @@
-import { useCustomContext } from './context';
+import { useCustomContext } from './contextHooks';
 import { Actions } from '../storage/reducer';
 
 type SyncFunction<T = unknown> = () => T;

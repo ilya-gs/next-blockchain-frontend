@@ -1,6 +1,6 @@
 import React from 'react'
 import { DutchAuction } from '../../../typechain-types/DutchAuction';
-import { useAppSelector } from '../common/context';
+import { useAppSelector } from '../common/contextHooks';
 import BcView from './BcView';
 import BcAction from './BcAction';
 import BcConnectIcon from './BcConnectIcon';

@@ -3,7 +3,7 @@ import { Button, Tooltip } from '@mui/material';
 import { FC, PropsWithChildren } from 'react'
 import { useSafe } from '../common/messageHook';
 import { eu } from './etherUtils';
-import { useAppSelector } from '../common/context';
+import { useAppSelector } from '../common/contextHooks';
 
 // <BeView field="currentLccPrice" format='v.toFixed(2)'
 
