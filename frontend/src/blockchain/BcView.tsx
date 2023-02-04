@@ -1,7 +1,8 @@
-import { CircularProgress, Tooltip } from '@mui/material';
 import React, { FC } from 'react'
 import * as utils from './functions';
 import { useAppSelector } from '../common/context';
+import { ContractFiledValue } from '../storage/reducer';
+import { CircularProgress, Tooltip } from '@mui/material';
 
 // <BcView contract='bank' field="stVer" format='v.toFixed(2)'
 
@@ -15,23 +16,37 @@ type Props = {
     tooltip?: string,
     lable?: string,
     hideDisconnected?: boolean
+} | {
+    value: ContractFiledValue,
+    format?: string,
+    tooltip?: string,
+    lable?: string,
+    hideDisconnected?: boolean
 }
 
 //====================================================//
 
-const BcView: FC<Props> = ({contract,field,format,tooltip,lable, hideDisconnected})=>{ 
+const BcView: FC<Props> = (props)=>{ 
     
-    const {contracts,walletConnected} = useAppSelector(state => state.blockchain)
-    const state = useAppSelector(state => state)
+    let v;
+    const { format, hideDisconnected, lable, tooltip } = props;
+    const state = useAppSelector(state => state);
+    const { walletConnected, contracts } = state.blockchain;
     
-    if(contracts[contract] === undefined)
-        return (
-            <span>Contract param is wrong!!</span>
-       )
-    if(contracts[contract][field] === undefined)
-        return (
-            <span>Field param is wrong!!</span>
-        )
+    if (!('value' in props)) {
+        const { contract, field } = props;
+        if (contracts[contract] === undefined)
+            return (
+                <span>Contract param is wrong!!</span>
+            )
+        if (contracts[contract][field] === undefined)
+            return (
+                <span>Field param is wrong!!</span>
+            )
+        v = contracts[contract][field];
+    }
+    else
+        v = props.value;
 
     if(hideDisconnected && !walletConnected)
     //    <span>Disconnected</span>
@@ -39,8 +54,8 @@ const BcView: FC<Props> = ({contract,field,format,tooltip,lable, hideDisconnecte
             <span></span>
         )
 
-    if (contracts[contract] === undefined || contracts[contract][field] === undefined)
-    //if(true)
+    //if (contracts[contract] === undefined || contracts[contract][field] === undefined)
+    if(false)
         return (
             <span>
                 {lable}
@@ -59,7 +74,6 @@ const BcView: FC<Props> = ({contract,field,format,tooltip,lable, hideDisconnecte
             </span>
         );
     
-    let v=contracts[contract][field];
 
     if(format)
     {

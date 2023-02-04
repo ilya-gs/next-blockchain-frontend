@@ -1,10 +1,12 @@
-import { MessageType } from './messageHook';
+import { MessageType } from '../common/messageHook';
 import { ethers } from 'ethers';
 
+export type ContractFiledValue = string | ethers.BigNumber | number | boolean | undefined;
 
 type BlockchainSlice = {
-    contracts: { [key: string]: { [key: string]: string | ethers.BigNumber | boolean, } },
-    walletConnected: boolean
+    contracts: { [key: string]: { [key: string]: ContractFiledValue, } },
+    walletConnected: boolean,
+    walletAddress: string
 }
 
 export type State = {
@@ -23,6 +25,7 @@ export const initialState: State = {
             auctionCar: { name: 'cc' },
         },
         walletConnected: false,
+        walletAddress: '',
     }
 }
 
@@ -34,14 +37,15 @@ export type Actions =
     | ['DECREASE']
     | ['SET', number ]
     | ['SEND_MESSAGE', { text: string, type: MessageType }]
-    | ['SET_CONTRACT_FIELD', { contract: string, field: string, value: string | ethers.BigNumber | boolean }]
+    | ['SET_CONTRACT_FIELD', { contract: string, field: string, value: ContractFiledValue }]
+    | ['SET_CONNECTION', { isConnected: boolean, address: string}]
 
 //====================================================//
 //====================================================//
 
 export function reducer(state: State, action: Actions): State {
     let payload;
-    
+    var newState = { ...state };
     switch (action[0]) {
         case 'INCREASE':
             return { ...state, counter: state.counter + 1 };
@@ -55,8 +59,12 @@ export function reducer(state: State, action: Actions): State {
             return { ...state, message: payload };
         case "SET_CONTRACT_FIELD":
             payload = action[1];
-            var newState = { ...state };
             newState.blockchain.contracts[payload.contract][payload.field] = payload.value;
+            return newState;
+        case "SET_CONNECTION":
+            const {isConnected,address} = action[1];
+            newState.blockchain.walletConnected = isConnected;
+            newState.blockchain.walletAddress = address;
             return newState;
         default:
             return state;

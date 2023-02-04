@@ -111,7 +111,7 @@ export type DeployedContracts = {
     ${Object.keys(fullContacts).map(key => fullContacts[key].name+ ": " + fullContacts[key].contract).join(', \n\t\t')}  
 }
 
-export function connectAll(provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider) : DeployedContracts
+export function connectAll(provider: ethers.providers.Web3Provider | ethers.providers.JsonRpcProvider | ethers.Signer) : DeployedContracts
 {
     let a: any = {};
 

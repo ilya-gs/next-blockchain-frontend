@@ -1,14 +1,27 @@
 import React from 'react';
-import { State, Actions, initialState } from './reducer';
+import { State, Actions, initialState } from '../storage/reducer';
 
-const CustomContext = React.createContext<{ state: State, dispatch: React.Dispatch<Actions> }>({ state: initialState, dispatch: null} as any ); 
+type P = typeof useAppSelector;
 
-export function useCustomContext() {
-    return React.useContext(CustomContext);
+const CustomContext = React.createContext<{ state: State, dispatch: React.Dispatch<Actions> }>({ state: initialState, dispatch: null } as any); 
+
+export function useCustomContext(): { selector: P, dispatch: React.Dispatch<Actions> } {
+    return {
+        selector: useAppSelector,
+        dispatch: React.useContext(CustomContext).dispatch
+    };
 }
 
-export function useAppSelector<Selected = unknown>(f: (state: State) => Selected): Selected {
+type Selector<T, R> = (state: T) => R;
+
+
+export function useAppSelector<Selected = unknown>(f: Selector<State,Selected>): Selected {
     return f(React.useContext(CustomContext).state);
+}
+
+
+export function useAppDispatch(): React.Dispatch<Actions> {
+    return React.useContext(CustomContext).dispatch;
 }
 
 export default CustomContext;
